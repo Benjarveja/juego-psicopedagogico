@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comandante de Defensa Intergalactica</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app" class="app">
+    <header class="hud">
+      <div class="hud-left">
+        <div class="badge">Ola <span id="waveLabel">1</span>/4</div>
+        <div class="badge">Puntos <span id="scoreLabel">0</span></div>
+      </div>
+      <div class="hud-right">
+        <button id="pauseBtn" class="btn small">Pausa</button>
+        <button id="soundBtn" class="btn small">Sonido: ON</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <section class="battlefield">
+        <div class="stars"></div>
+        <div class="stars layer2"></div>
+        <div class="stars layer3"></div>
+
+        <div class="lives" id="livesPanel" aria-label="Vidas">
+          <span class="life">❤</span>
+          <span class="life">❤</span>
+          <span class="life">❤</span>
+        </div>
+
+        <div class="combo" id="comboPanel">
+          <div class="combo-bar">
+            <div class="combo-fill" id="comboFill"></div>
+          </div>
+          <div class="combo-text">Combo x<span id="comboLabel">0</span></div>
+        </div>
+
+        <div class="base">
+          <div class="shield"></div>
+          <img class="ship" src="assets/protagonista.png" alt="Nave espacial" />
+        </div>
+
+        <div id="enemyArea" class="enemy-area" aria-live="polite"></div>
+
+        <div class="message" id="messageBox" role="status"></div>
+
+        <button id="understoodBtn" class="btn understood" disabled>ENTENDI</button>
+      </section>
+
+      <aside class="workzone hidden" id="workzone" aria-hidden="true">
+        <div class="workzone-header">
+          <h2>Zona de trabajo</h2>
+          <div class="instruction" id="instructionText">Lee la instruccion</div>
+        </div>
+
+        <div class="progress" id="progressText">Seleccion: 0</div>
+        <div class="requirements" id="requirementsBox"></div>
+
+        <div class="slots" id="slotsGrid" aria-label="Casillas de seleccion"></div>
+
+        <div class="elements" id="elementsGrid" aria-label="Elementos disponibles"></div>
+
+        <div class="workzone-actions">
+          <button id="stepBtn" class="btn secondary hidden">Siguiente paso</button>
+          <button id="shootBtn" class="btn shoot">¡DISPARAR!</button>
+          <button id="helpBtn" class="btn secondary">Releer</button>
+        </div>
+
+        <div class="feedback" id="feedbackBox"></div>
+      </aside>
+    </main>
+
+    <section id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
+      <div class="overlay-card" id="overlayCard">
+        <h2 id="overlayTitle">Bienvenido</h2>
+        <p id="overlayText">Lee la instruccion, presiona ENTIENDO y resuelve.</p>
+        <div class="overlay-actions" id="overlayActions">
+          <button id="startBtn" class="btn">Comenzar</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="elements.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
