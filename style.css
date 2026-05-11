@@ -504,6 +504,37 @@ body {
     inset: 18px;
     z-index: 10;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    padding: 12px;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .slots {
+    min-height: 96px;
+    grid-template-columns: repeat(auto-fit, minmax(56px, 1fr));
+  }
+
+  .slot {
+    min-height: 56px;
+  }
+
+  .slot img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .elements {
+    grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+    max-height: 42vh;
+  }
+
+  .element {
+    padding: 8px;
+  }
+
+  .element-icon {
+    width: 48px;
+    height: 48px;
   }
 
   .btn.understood {

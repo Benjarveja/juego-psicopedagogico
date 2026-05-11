@@ -15,7 +15,8 @@ const state = {
   sequenceStep: 0,
   history: [],
   dragSourceIndex: null,
-  dragDropped: false
+  dragDropped: false,
+  touchDrag: null
 };
 
 const SLOT_COUNT = 10;
@@ -139,6 +140,10 @@ function buildElementsGrid() {
       event.dataTransfer.setData("text/plain", item.id);
     });
     card.addEventListener("click", () => addToFirstEmpty(item.id));
+    card.addEventListener("touchstart", (event) => {
+      event.preventDefault();
+      startTouchDrag(item.id, null, event.touches[0]);
+    }, { passive: false });
 
     card.append(icon, label, counter);
     ui.elementsGrid.append(card);
@@ -197,11 +202,16 @@ function renderSlots() {
         state.dragSourceIndex = null;
         state.dragDropped = false;
       };
+      slot.ontouchstart = (event) => {
+        event.preventDefault();
+        startTouchDrag(id, index, event.touches[0]);
+      };
       slot.append(img);
     } else {
       slot.removeAttribute("draggable");
       slot.ondragstart = null;
       slot.ondragend = null;
+      slot.ontouchstart = null;
     }
   });
 }
@@ -234,6 +244,61 @@ function addToFirstEmpty(id) {
   }
   moveIntoSlot(index, id);
   return true;
+}
+
+function startTouchDrag(id, sourceIndex, touch) {
+  if (!id) return;
+  const ghost = document.createElement("img");
+  ghost.src = ELEMENTS.find((entry) => entry.id === id)?.icon || "";
+  ghost.alt = "";
+  ghost.style.position = "fixed";
+  ghost.style.zIndex = "999";
+  ghost.style.pointerEvents = "none";
+  ghost.style.width = "48px";
+  ghost.style.height = "48px";
+  document.body.append(ghost);
+
+  state.touchDrag = { id, sourceIndex, ghost };
+  moveTouchGhost(touch);
+
+  window.addEventListener("touchmove", handleTouchMove, { passive: false });
+  window.addEventListener("touchend", handleTouchEnd, { passive: false });
+}
+
+function moveTouchGhost(touch) {
+  if (!state.touchDrag) return;
+  const { ghost } = state.touchDrag;
+  ghost.style.left = `${touch.clientX - 24}px`;
+  ghost.style.top = `${touch.clientY - 24}px`;
+}
+
+function handleTouchMove(event) {
+  event.preventDefault();
+  if (!state.touchDrag) return;
+  moveTouchGhost(event.touches[0]);
+}
+
+function handleTouchEnd(event) {
+  event.preventDefault();
+  if (!state.touchDrag) return;
+
+  const { id, sourceIndex, ghost } = state.touchDrag;
+  const endTouch = event.changedTouches[0];
+  const slotsRect = ui.slotsGrid.getBoundingClientRect();
+  const droppedInside = endTouch.clientX >= slotsRect.left
+    && endTouch.clientX <= slotsRect.right
+    && endTouch.clientY >= slotsRect.top
+    && endTouch.clientY <= slotsRect.bottom;
+
+  const added = droppedInside ? addToFirstEmpty(id) : false;
+  if (!added && sourceIndex !== null) {
+    clearSlot(sourceIndex);
+  }
+
+  ghost.remove();
+  state.touchDrag = null;
+  window.removeEventListener("touchmove", handleTouchMove);
+  window.removeEventListener("touchend", handleTouchEnd);
 }
 
 function clearSlot(index) {
